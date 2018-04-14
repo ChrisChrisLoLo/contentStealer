@@ -13,40 +13,41 @@ const timePeriod = "day"
 
 //reddit URL used to retrive JSON containing image links.
 var redditURL = `https://www.reddit.com/r/${subreddit}/top.json?t=${timePeriod}`
-
-//Send GET request to reddit URL to retrieve JSON data.
-https.get(redditURL, (res)=>{
-	var redditJSON = ""
-	res.on("data",(d)=>{
-		redditJSON += d;
-	});
-	res.on("end",()=>{
-		//convert object to string, then get links 
-		redditObj = JSON.parse(redditJSON)
-		console.log(redditObj)
-		imagesGotten = 0
-		i = 0
-		while(imagesGotten < imageAmount){
-			//Check if post is an image post
-			if (redditObj.data.children[i].data.preview.images[0]){
-				imagePost = redditObj.data.children[i].data.preview.images[0].source.url
-				console.log(checkExtension(imagePost))
-				//Check if post is a jpg post, and not a gifv or gif post. For now only jpgs are collected
-				//Though this could probably be expanded in the future.
-				if (checkExtension(imagePost) === "jpg"){
-					linkToImage(redditObj.data.children[i].data.preview.images[0].source.url,imagesGotten,"jpg")
-					imagesGotten += 1
-				}
-			}
-			i++;
-		}
-	});
-
-}).on("error",(e)=>{
-	console.error(e);
-	console.log("!!!!!!!!!!")
-});
-
+module.exports = {
+	getImages: function getImages(){
+			//Send GET request to reddit URL to retrieve JSON data.
+			https.get(redditURL, (res)=>{
+				var redditJSON = ""
+				res.on("data",(d)=>{
+					redditJSON += d;
+				});
+				res.on("end",()=>{
+					//convert object to string, then get links 
+					redditObj = JSON.parse(redditJSON)
+					console.log(redditObj)
+					imagesGotten = 0
+					i = 0
+					while(imagesGotten < imageAmount){
+						//Check if post is an image post
+						if (redditObj.data.children[i].data.preview.images[0]){
+							imagePost = redditObj.data.children[i].data.preview.images[0].source.url
+							console.log(checkExtension(imagePost))
+							//Check if post is a jpg post, and not a gifv or gif post. For now only jpgs are collected
+							//Though this could probably be expanded in the future.
+							if (checkExtension(imagePost) === "jpg"){
+								linkToImage(redditObj.data.children[i].data.preview.images[0].source.url,imagesGotten,"jpg")
+								imagesGotten += 1
+							}
+						}
+						i++;
+					}
+				});
+				}).on("error",(e)=>{
+					console.error(e);
+					console.log("!!!!!!!!!!")
+			});
+	}
+}
 //convert image link, stores it away 
 function linkToImage(link,imageIndex,fileExtension){
 	if (!fs.existsSync("./images")) {
