@@ -34,7 +34,7 @@ https.get(redditURL, (res)=>{
 				//Check if post is a jpg post, and not a gifv or gif post. For now only jpgs are collected
 				//Though this could probably be expanded in the future.
 				if (checkExtension(imagePost) === "jpg"){
-					linkToImage(redditObj.data.children[i].data.preview.images[0].source.url,imagesGotten)
+					linkToImage(redditObj.data.children[i].data.preview.images[0].source.url,imagesGotten,"jpg")
 					imagesGotten += 1
 				}
 			}
@@ -48,11 +48,11 @@ https.get(redditURL, (res)=>{
 });
 
 //convert image link, stores it away 
-function linkToImage(link,imageIndex){
+function linkToImage(link,imageIndex,fileExtension){
 	if (!fs.existsSync("./images")) {
     	fs.mkdirSync("./images");
 	}
-	var file = fs.createWriteStream(`./images/image${imageIndex}.jpg`);
+	var file = fs.createWriteStream(`./images/image${imageIndex}.${fileExtension}`);
 	var request = https.get(link, function(response) {
 	  response.pipe(file);
 	});
@@ -64,8 +64,3 @@ function checkExtension(imageURL){
 	return extension
 }
 
-
-// var file = fs.createWriteStream("file.jpg");
-// var request = http.get("http://i.redditmedia.com/c8MR2tLU3oBJ_IpUZj-3ghfZxOsYyPX3JS_0S2922Og.jpg?s=970766faa90b0f44256c2f757d86933a", function(response) {
-//   response.pipe(file);
-// });
