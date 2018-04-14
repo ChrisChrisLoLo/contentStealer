@@ -3,12 +3,16 @@ var fs = require("fs");
 var express = require("express");
 var app = express();
 //image amount corresponds to the amount of images you want
+//You can change the subreddit as well as the time period you want to search
+//Code will break if you do not use a image based subreddit.
 const imageAmount = 5;
-//TODO: If for whatever reason you need to load less theres a reddit GET parameter
+const subreddit = "cats"
+const timePeriod = "day"
+//If for whatever reason you need to load less theres a reddit GET parameter
 //that limits the amount of images you can load. Maybe useful if loading this on a pi.
 
 //reddit URL used to retrive JSON containing image links.
-var redditURL = "https://www.reddit.com/r/cats/top.json?t=day"
+var redditURL = `https://www.reddit.com/r/${subreddit}/top.json?t=${timePeriod}`
 
 //Send GET request to reddit URL to retrieve JSON data.
 https.get(redditURL, (res)=>{
@@ -20,8 +24,21 @@ https.get(redditURL, (res)=>{
 		//convert object to string, then get links 
 		redditObj = JSON.parse(redditJSON)
 		console.log(redditObj)
-		for(var i = 0;i<imageAmount;i++){
-			linkToImage(redditObj.data.children[i].data.preview.images[0].source.url,i)
+		imagesGotten = 0
+		i = 0
+		while(imagesGotten < imageAmount){
+			//Check if post is an image post
+			if (redditObj.data.children[i].data.preview.images[0]){
+				imagePost = redditObj.data.children[i].data.preview.images[0].source.url
+				console.log(checkExtension(imagePost))
+				//Check if post is a jpg post, and not a gifv or gif post. For now only jpgs are collected
+				//Though this could probably be expanded in the future.
+				if (checkExtension(imagePost) === "jpg"){
+					linkToImage(redditObj.data.children[i].data.preview.images[0].source.url,imagesGotten)
+					imagesGotten += 1
+				}
+			}
+			i++;
 		}
 	});
 
@@ -30,8 +47,11 @@ https.get(redditURL, (res)=>{
 	console.log("!!!!!!!!!!")
 });
 
-//convert image link, stores it way 
+//convert image link, stores it away 
 function linkToImage(link,imageIndex){
+	if (!fs.existsSync("./images")) {
+    	fs.mkdirSync("./images");
+	}
 	var file = fs.createWriteStream(`./images/image${imageIndex}.jpg`);
 	var request = https.get(link, function(response) {
 	  response.pipe(file);
