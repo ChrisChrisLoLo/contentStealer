@@ -1,13 +1,10 @@
 var https = require("https");
 var fs = require("fs");
-var express = require("express");
-var app = express();
-//image amount corresponds to the amount of images you want
-//You can change the subreddit as well as the time period you want to search
-//Code will break if you do not use a image based subreddit.
-const imageAmount = 5;
-const subreddit = "cats"
-const timePeriod = "day"
+var constants = require("./constants")
+
+const imageAmount = constants.imageAmount;
+const subreddit = constants.subreddit;
+const timePeriod = constants.timePeriod;
 //If for whatever reason you need to load less theres a reddit GET parameter
 //that limits the amount of images you can load. Maybe useful if loading this on a pi.
 
@@ -61,7 +58,6 @@ function linkToImage(link,imageIndex,fileExtension){
 
 function checkExtension(imageURL){
 	var extension = imageURL.split(".").pop().split("?")[0];
-
 	return extension
 }
 
