@@ -1,0 +1,6 @@
+This code can run on the raspberry pi zero, however it has not yet been proven to run continously.
+A few tips to remember:
+1. If you're using ssh, you need to use "screen" on the pi so it wont exit when you halt the ssh
+2. You need to add the --max-old-space-size=200 parameter so garbage collection will start at 200mB and (hopefully) won't overflow the Pi's ram. This value may need to be tweaked depending on how the Pi operates.
+3. The Raspi Zero uses ARM v6, meaning you cannot simply apt-get node, as the node distribution supports Raspi 3. Download the specific ARM v6 version through the node site. 
+4. Adding comments may or may not cause the program to crash, https://github.com/nodejs/node/issues/2970

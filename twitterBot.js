@@ -22,13 +22,15 @@ var T = new Twit({
 
 //Grab first set of images
 imageGrab.getImages()
+var imageCounter = 0
+
 
 //Grab set of n images every time period.
 var imageGrabbing = setInterval(()=>{
 	imageGrab.getImages()
 },timeInMillis);
 
-var imageCounter = 0
+
 
 //Drips in images over the course of the set time period.
 var postImages = setInterval(()=>{
