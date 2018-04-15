@@ -26,19 +26,27 @@ module.exports = {
 					i = 0
 					while(imagesGotten < imageAmount){
 						//Check if post is an image post
-						if (redditObj.data.children[i].data.preview.images[0]){
-							//filter out NSFW materials
-							if (redditObj.data.children[i].data.over_18 === false){
-								imagePost = redditObj.data.children[i].data.preview.images[0].source.url
-								console.log(checkExtension(imagePost))
-								//Check if post is a jpg post, and not a gifv or gif post.
-								if (checkExtension(imagePost) === "jpg"){
-									linkToImage(redditObj.data.children[i].data.preview.images[0].source.url,imagesGotten,"jpg")
-									imagesGotten += 1
+						try{
+							if (redditObj.data.children[i].data.preview.images[0]){
+								//filter out NSFW materials
+								if (redditObj.data.children[i].data.over_18 === false){
+									imagePost = redditObj.data.children[i].data.preview.images[0].source.url;
+									console.log(checkExtension(imagePost));
+									//Check if post is a jpg post, and not a gifv or gif post.
+									if (checkExtension(imagePost) === "jpg"){
+										linkToImage(redditObj.data.children[i].data.preview.images[0].source.url,imagesGotten,"jpg");
+										imagesGotten += 1;
+									}
 								}
 							}
 						}
-						i++;
+						catch(e){
+							console.error(e);
+						}
+						finally{
+							i++;
+						}
+
 					}
 				});
 				}).on("error",(e)=>{
