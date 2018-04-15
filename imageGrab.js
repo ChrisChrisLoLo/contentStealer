@@ -27,7 +27,8 @@ module.exports = {
 					while(imagesGotten < imageAmount){
 						//Check if post is an image post
 						try{
-							if (redditObj.data.children[i].data.preview.images[0]){
+							//TODO: need to find conditional that doesnt crash if preview is not defined.
+							if (redditObj.data.children[i].data.preview){
 								//filter out NSFW materials
 								if (redditObj.data.children[i].data.over_18 === false){
 									imagePost = redditObj.data.children[i].data.preview.images[0].source.url;
