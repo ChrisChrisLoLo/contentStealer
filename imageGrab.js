@@ -27,7 +27,8 @@ module.exports = {
 					while(imagesGotten < imageAmount){
 						//Check if post is an image post
 						try{
-							//TODO: need to find conditional that doesnt crash if preview is not defined.
+							//BUG: Bot can and will crash if we run of out posts. This is likely to happen
+							//During "low" hours, even in moderately popular subs.
 							if (redditObj.data.children[i].data.preview){
 								//filter out NSFW materials
 								if (redditObj.data.children[i].data.over_18 === false){
@@ -43,6 +44,10 @@ module.exports = {
 						}
 						catch(e){
 							console.error(e);
+							//Function returns on fail, this is simply a hot glue gun fix for the issue of the bot running out of images
+							//This fix WILL cause reposts, and a more robust solution needs to happen, but for now I just want the bot not to die
+							return
+							//end fix
 						}
 						finally{
 							i++;
